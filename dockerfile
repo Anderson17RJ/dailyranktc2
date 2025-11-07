@@ -19,4 +19,4 @@ ENV PORT=10000
 EXPOSE 10000
 
 # Comando de start (Render usará Dockerfile)
-CMD ["xvfb-run", "node", "index.js"]
+CMD xvfb-run --server-args="-screen 0 1024x768x24" node index.js
