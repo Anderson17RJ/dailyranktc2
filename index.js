@@ -1,7 +1,9 @@
 import express from "express";
+import cors from "cors";
 import { chromium } from "playwright";
 
 const app = express();
+app.use(cors());
 const PORT = process.env.PORT || 10000;
 const BASE_URL = "https://thecrims.com";
 
@@ -54,6 +56,10 @@ async function fetchTop50ViaPlaywright() {
       return JSON.stringify({ __error: String(e) });
     }
   }, apiUrl);
+
+  console.log("==== conteudo bruto do thecrims ====");
+  console.log(jsonText.slice(0, 500));
+  console.log("====================================");
 
   // Fecha browser (ou feche contexto para manter session — aqui fechamos)
   await browser.close();
