@@ -8,10 +8,14 @@ const BASE_URL = "https://thecrims.com";
 async function fetchTop50ViaPlaywright() {
   // Lança browser (no container a imagem Playwright já tem tudo)
   const browser = await chromium.launch({
-    headless: true, // RODAR headful para reduzir detecção
+    headless: false, // RODAR headful para reduzir detecção
     args: [
       '--no-sandbox',
-      '--disable-setuid-sandbox'
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-accelerated-2d-canvas',
+      '--disable-gpu',
+      '--window-size=1200,800'
     ]
   });
 

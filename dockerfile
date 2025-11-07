@@ -1,6 +1,9 @@
 # Use imagem oficial Playwright que já contém browsers e dependências
 FROM mcr.microsoft.com/playwright:v1.56.1-noble
 
+# Instala Xvfb (servidor X virtual)
+RUN apt-get update && apt-get install -y xvfb
+
 # Cria diretório da app
 WORKDIR /app
 
@@ -16,4 +19,4 @@ ENV PORT=10000
 EXPOSE 10000
 
 # Comando de start (Render usará Dockerfile)
-CMD ["node", "index.js"]
+CMD ["xvfb-run", "node", "index.js"]
