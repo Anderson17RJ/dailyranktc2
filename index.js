@@ -1,11 +1,16 @@
 import express from "express";
 import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 import { chromium } from "playwright";
 
 const app = express();
 app.use(cors());
 const PORT = process.env.PORT || 10000;
 const BASE_URL = "https://thecrims.com";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 async function fetchTop50ViaPlaywright() {
   // Lança browser (no container a imagem Playwright já tem tudo)
@@ -42,6 +47,8 @@ async function fetchTop50ViaPlaywright() {
   await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
   // pequena espera para o Cloudflare completar eventuais scripts
   await page.waitForTimeout(3000);
+  await page.screenshot({ path: "debug.png", fullPage: true});
+  console.log("=== screenshot capturada ===");
 
   // Agora faça fetch da API interna do site pelo próprio navegador (mesmo contexto/cookies)
   const apiUrl = `${BASE_URL}/api/v1/stats/killers?country=&character=&level=`;
@@ -60,6 +67,9 @@ async function fetchTop50ViaPlaywright() {
   console.log("==== conteudo bruto do thecrims ====");
   console.log(jsonText.slice(0, 500));
   console.log("====================================");
+
+  await page.screenshot({ path: "debug2.png", fullPage: true });
+    console.log("=== Screenshot2 capturada ===");
 
   // Fecha browser (ou feche contexto para manter session — aqui fechamos)
   await browser.close();
@@ -84,6 +94,14 @@ async function fetchTop50ViaPlaywright() {
     }
   }
 }
+
+app.get("/debug.png", (req, res) => {
+    res.sendFile(path.join(__dirname, "debug.png"));
+});
+
+app.get("/debug2.png", (req, res) => {
+    res.sendFile(path.join(__dirname, "debug2.png"));
+});
 
 app.get("/api/top50", async (req, res) => {
   try {
